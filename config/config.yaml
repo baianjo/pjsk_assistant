@@ -1,0 +1,10 @@
+#游戏相关配置
+game:
+  package_name: "com.hermes.mk"
+
+
+#模拟器配置
+emulator:
+  name: "MuMuPlayer"
+  adb_path: "E:/E-SOFTWARE/MuMuPlayer-12.0/shell/adb.exe"
+  device_serial: "127.0.0.1:16384"
