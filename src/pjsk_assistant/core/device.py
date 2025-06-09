@@ -32,8 +32,8 @@ class Device:
             self.device = adbutils.device(serial=self.serial)
 
             #检查设备是否真的在线
-            if self.device.prop.get_model():
-                print(f"成功连接到：{self.device.prop.get_model()}")
+            if self.device.prop.model:
+                print(f"成功连接到：{self.device.prop.model}")
                 return True
             else:
                 print(f"Warning: 设备{self.serial}似乎离线。")
@@ -60,9 +60,21 @@ class Device:
             return None
 
         try:
-            #adbutils的screenshot()返回的是Pillow的Image对象，我们转换为OpenCV能用的格式
             #Pillow Image -> bytes
-            return self.device.screenshot().tobytes()
+            from io import BytesIO
+
+            # 1. 从设备获取截图，得到一个 Pillow Image 对象
+            pil_image = self.device.screenshot()
+
+            # 2. 创建一个内存中的二进制流对象
+            img_buffer = BytesIO()
+
+            # 3. 使用Pillow的save方法，将图像以PNG格式写入到内存流中
+            pil_image.save(img_buffer, format='PNG')
+
+            # 4. 从内存流中获取完整的PNG文件的字节数据
+            png_bytes = img_buffer.getvalue()
+            return png_bytes
         except AdbError as e:
             print(f"Error: 截图时发生ADB错误：{e}")
             return None
