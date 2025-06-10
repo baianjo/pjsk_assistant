@@ -30,6 +30,7 @@ def main():
 
     print("已成功加载配置！")
 
+
     # --- 2. 初始化核心模块 (我们后面再写) ---
     print("Initializing core modules...")
     device = Device(device_serial=emulator_serial)

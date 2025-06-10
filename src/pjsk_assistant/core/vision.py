@@ -24,7 +24,7 @@ def find_template(screen_image_bytes: bytes, template_path: str, threshold: floa
         # 这样无论玩家用1080P还是2K屏，都是同一尺寸的图像
         h, w = screen_img.shape[:2]
         scale_ratio = DESIGN_RESOLUTION[1] / h # 按高度比例缩放
-
+        # 把原图按计算好的比例进行缩放
         resized_screen = cv2.resize(screen_img, (int(w * scale_ratio), int(h * scale_ratio)), interpolation=cv2.INTER_AREA)
 
 

@@ -21,6 +21,8 @@ class Device:
         self.serial: str = device_serial
         self.device: AdbDevice | None = None # 用来存储连接后的设备对象，初始为None
 
+
+
     def connect(self) -> bool:
         """
         连接到指定的设备
@@ -50,6 +52,7 @@ class Device:
             return False
 
 
+
     def screenshot(self) -> bytes | None:
         """
         获取当前屏幕截图
@@ -60,7 +63,10 @@ class Device:
             return None
 
         try:
-            #Pillow Image -> bytes
+            # Pillow Image -> bytes
+            # adbutils给的是一个Pillow对象，而我们后续的图像处理（用OpenCV）或者保存文件，
+            # 都需要的是纯粹的、格式化的图片字节流（bytes）。这个四步法就是个标准的“格式转换”流程
+            # 【固定流程，可作结论】
             from io import BytesIO
 
             # 1. 从设备获取截图，得到一个 Pillow Image 对象
@@ -75,6 +81,7 @@ class Device:
             # 4. 从内存流中获取完整的PNG文件的字节数据
             png_bytes = img_buffer.getvalue()
             return png_bytes
+
         except AdbError as e:
             print(f"Error: 截图时发生ADB错误：{e}")
             return None
