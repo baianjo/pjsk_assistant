@@ -1,14 +1,15 @@
 import yaml
 import os
 
-from src.pjsk_assistant.core.device import Device
+from src.zzz_assistant.core.device import Device
+from src.zzz_assistant.core.vision import find_template
 
 
 def main():
     """
     程序主函数
     """
-    print("PJSK Assistant 正在启动...")
+    print("ZZZ Assistant 正在启动...")
 
     # --- 1. 加载配置 ---
     config_path = os.path.join(os.path.dirname(__file__), 'config', 'config.yaml')
@@ -45,17 +46,25 @@ def main():
     # --- 3. 执行测试任务 (我们后面再写主任务) ---
     # print("Starting main task loop...")
     # run_daily_tasks(...)
-    print("执行测试任务：截图")
+    print("执行测试任务：识别主界面")
     screenshot_bytes = device.screenshot()
 
-    if screenshot_bytes:
-        with open("debug_screenshot.png", "wb") as f:
-            f.write(screenshot_bytes)
-        print("截图成功！已保存为debug_screenshot.png")
-
-    else:
+    if not screenshot_bytes:
         print("Error: 截图失败")
+        return
 
+    with open("debug_screenshot.png", "wb") as f:
+        f.write(screenshot_bytes)
+    print("截图成功！已保存为debug_screenshot.png")
+
+    template_path = os.path.join(os.path.dirname(__file__), 'assets', 'main_page', 'MAIN_GOTO_GUIDE.png')
+    # 调用视觉函数
+    location = find_template(screenshot_bytes, template_path)
+    # 根据查找结果打印信息
+    if location:
+        print(f"成功在坐标{location}找到了模板！")
+    else:
+        print("Error: 未找到模板。")
 
 
     print("PJSK Assistant has finished its run. (for now)")

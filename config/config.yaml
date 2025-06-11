@@ -1,6 +1,6 @@
 #游戏相关配置
 game:
-  package_name: "com.hermes.mk"
+  package_name: "com.miHoYo.Nap"
 
 
 #模拟器配置
