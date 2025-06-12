@@ -19,7 +19,8 @@ class Device:
                                 这个值我们从config.yaml文件中获取。
         """
         self.serial: str = device_serial
-        self.device: AdbDevice | None = None # 用来存储连接后的设备对象，初始为None
+        self.device: AdbDevice | None = None
+        # 用来存储连接后的设备对象，初始为None。
 
 
 
@@ -31,9 +32,10 @@ class Device:
         """
         try:
             print(f"尝试连接设备：{self.serial}...")
+            # 后续self.device.* 就等价于adbutiles.device.*
             self.device = adbutils.device(serial=self.serial)
 
-            #检查设备是否真的在线
+            # 检查设备是否真的在线
             if self.device.prop.model:
                 print(f"成功连接到：{self.device.prop.model}")
                 return True
@@ -87,3 +89,25 @@ class Device:
             return None
 
         # 后续会添加click等方法，MaaTouch也会在这里进行
+
+
+    def click(self, x: int, y: int):
+        """
+        点击操作
+        :param x: 点击位置的x坐标
+        :param y: 点击位置的y坐标
+        """
+        if not self.device:
+            print("Error: 设备未连接，无法点击！")
+            return
+
+        try:
+            print(f"在坐标({x}, {y})执行点击")
+
+            # adbutils
+            self.device.click(x, y)
+            print("点击完成。")
+        except AdbError as e:
+            print(f"Error: 点击时发生adb错误：{e}")
+        except Exception as e:
+            print(f"Error: 点击时发生未知错误：{e}")

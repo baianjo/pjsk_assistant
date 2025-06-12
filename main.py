@@ -66,6 +66,8 @@ def main():
     else:
         print("Error: 未找到模板。")
 
+    device.click(location[0], location[1])
+
 
     print("PJSK Assistant has finished its run. (for now)")
 
