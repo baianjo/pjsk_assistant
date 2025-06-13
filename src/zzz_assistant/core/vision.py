@@ -14,7 +14,7 @@ def find_template(screen_image_bytes: bytes, template_path: str, threshold: floa
     """
 
     try:
-        #1.将截图字节流解码为OpenCV图像格式
+        # 1.将截图字节流解码为OpenCV图像格式
         screen_np = np.frombuffer(screen_image_bytes, np.uint8)
         screen_img = cv2.imdecode(screen_np, cv2.IMREAD_COLOR)
 
@@ -28,8 +28,11 @@ def find_template(screen_image_bytes: bytes, template_path: str, threshold: floa
         resized_screen = cv2.resize(screen_img, (int(w * scale_ratio), int(h * scale_ratio)), interpolation=cv2.INTER_AREA)
 
 
-        # 3. 加载模板图片（模板本身就应该是设计分辨率下的截图）
-        template_img = cv2.imread(template_path, cv2.IMREAD_COLOR)
+        # 3. 加载模板图片 
+        with open(template_path, 'rb') as f:
+            template_bytes = f.read()
+        template_np = np.frombuffer(template_bytes, np.uint8)
+        template_img = cv2.imdecode(template_np, cv2.IMREAD_COLOR)
         if template_img is None:
             print(f"Error: 无法加载图片at {template_path}")
             return None
@@ -44,7 +47,7 @@ def find_template(screen_image_bytes: bytes, template_path: str, threshold: floa
             center_x = max_loc[0] + template_w // 2
             center_y = max_loc[1] + template_h // 2
             print(f"在坐标{(center_x, center_y)}找到模板{template_path}, 相似度：{max_val:.2f}")
-            return (center_x, center_y)
+            return center_x, center_y
         else:
             return None
 
