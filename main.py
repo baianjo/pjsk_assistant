@@ -3,6 +3,7 @@ import os
 
 from src.zzz_assistant.core.device import Device
 from src.zzz_assistant.core.vision import find_template
+from src.zzz_assistant.tasks.login import LoginTask
 
 
 def main():
@@ -47,26 +48,9 @@ def main():
     # print("Starting main task loop...")
     # run_daily_tasks(...)
     print("执行测试任务：识别主界面")
-    screenshot_bytes = device.screenshot()
+    login_task = LoginTask(device=device, config=config)
+    success = login_task.run()
 
-    if not screenshot_bytes:
-        print("Error: 截图失败")
-        return
-
-    with open("debug_screenshot.png", "wb") as f:
-        f.write(screenshot_bytes)
-    print("截图成功！已保存为debug_screenshot.png")
-
-    template_path = os.path.join(os.path.dirname(__file__), 'assets', 'main_page', 'MAIN_GOTO_GUIDE.png')
-    # 调用视觉函数
-    location = find_template(screenshot_bytes, template_path)
-    # 根据查找结果打印信息
-    if location:
-        print(f"成功在坐标{location}找到了模板！")
-    else:
-        print("Error: 未找到模板。")
-
-    device.click(location[0], location[1])
 
 
     print("PJSK Assistant has finished its run. (for now)")
