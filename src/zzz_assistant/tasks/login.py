@@ -1,9 +1,9 @@
 import os
-import time
+import yaml
 
 from src.zzz_assistant.tasks.base_task import BaseTask
-from src.zzz_assistant.core.vision import find_template
-from src.zzz_assistant.utils.paths import PROJECT_ROOT
+from src.zzz_assistant.utils.helpers import wait_for_template
+from src.zzz_assistant.utils.paths import PROJECT_ROOT, ASSETS_PATH, CONFIG_PATH
 
 
 class LoginTask(BaseTask):
@@ -17,29 +17,44 @@ class LoginTask(BaseTask):
         重写run方法，实现登录的具体逻辑
         """
         print("开始执行【登录任务】...")
-        template_path = os.path.join(
-            PROJECT_ROOT,
-            'assets', 'login', 'TEMPORARILY_CLOSED.png'
-        )
+        # 1. 打开游戏
+        # TODO: 添加打开游戏逻辑
 
-        #尝试寻找并点击登录按钮
-        screenshot_bytes = self.device.screenshot()
-        if not screenshot_bytes:
-            print("Error: 截图失败，登录任务终止")
+
+        # 2. 寻找并点击登录按钮
+        login_button_path = os.path.join(
+            ASSETS_PATH, 'login', 'CLICK_INTO_GAME.png'
+        )
+        login_button_location = wait_for_template(
+            self.device,
+            login_button_path,
+            timeout=60.0)
+
+        if not login_button_location:
+            print("Error: 未在截图中找到登录按钮。")
             return False
 
-        with open("debug_screenshot.png", "wb") as f:
-            f.write(screenshot_bytes)
-        print("【DEV】截图成功！已保存为debug_screenshot.png")
+        self.device.click(login_button_location[0], login_button_location[1])
+        print("已点击登录按钮，等待进入主界面...")
 
 
-        # 调用视觉函数
-        location = find_template(screenshot_bytes, template_path)
-        # 根据查找结果打印信息
-        if location:
-            print(f"成功在坐标{location}找到了模板！即将点击此处")
-            self.device.click(location[0], location[1])
-            time.sleep(3)
-            return True
-        else:
-            print("Error: 未找到模板。")
+        # 3. 检查该版本是否有广告，若有，等待广告标志出现
+        config_path = os.path.join(CONFIG_PATH, 'config.yaml')
+        ad_enabled = False
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        if config['ad']['enabled']:
+            ad_enabled = True
+            print("该版本有广告弹窗，等待检测并关闭")
+        if ad_enabled:
+            ad_button_location = wait_for_template(
+                self.device,
+                os.path.join(ASSETS_PATH, 'login', '_TEMP_AD_BUTTON.png'),
+                timeout=60.0)
+            if ad_button_location:
+                self.device.click(ad_button_location[0], ad_button_location[1])
+                print("已点击广告按钮，等待广告关闭...")
+
+
+        # 4. 等待主界面标志出现
+

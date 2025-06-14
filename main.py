@@ -2,8 +2,8 @@ import yaml
 import os
 
 from src.zzz_assistant.core.device import Device
-from src.zzz_assistant.core.vision import find_template
 from src.zzz_assistant.tasks.login import LoginTask
+from src.zzz_assistant.utils.paths import CONFIG_PATH
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     print("ZZZ Assistant 正在启动...")
 
     # --- 1. 加载配置 ---
-    config_path = os.path.join(os.path.dirname(__file__), 'config', 'config.yaml')
+    config_path = os.path.join(CONFIG_PATH, 'config.yaml')
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)

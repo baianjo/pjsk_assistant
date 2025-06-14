@@ -8,3 +8,8 @@ emulator:
   name: "MuMuPlayer"
   adb_path: "E:/E-SOFTWARE/MuMuPlayer-12.0/shell/adb.exe"
   device_serial: "127.0.0.1:16384"
+
+
+#当前版本是否有广告弹窗
+ad:
+  enabled: true
