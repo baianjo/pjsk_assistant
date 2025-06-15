@@ -142,22 +142,22 @@ class Device:
 
 
 
-        def start_game(self, package_name: str) -> bool:
-            """
-            启动指定的应用
-            :param package_name:
-            :return:成功返回True，失败返回False
-            """
-            if not self.device:
-                print("Error: 设备未连接，无法启动游戏！")
-                return False
+    def start_game(self, package_name: str) -> bool:
+        """
+        启动指定的应用
+        :param package_name:
+        :return:成功返回True，失败返回False
+        """
+        if not self.device:
+            print("Error: 设备未连接，无法启动游戏！")
+            return False
 
-            try:
-                print(f"尝试启动游戏：{package_name}...")
-                self.device.app_start(package_name)
-                time.sleep(5)
-                print(f"启动命令已发送，等待5秒后检查游戏是否启动。")
-                return True
-            except AdbError as e:
-                print(f"Error: 启动游戏时发生ADB错误：{e}")
-                return False
+        try:
+            print(f"尝试启动游戏：{package_name}...")
+            self.device.app_start(package_name)
+            time.sleep(5)
+            print(f"启动命令已发送，等待5秒后检查游戏是否启动。")
+            return True
+        except AdbError as e:
+            print(f"Error: 启动游戏时发生ADB错误：{e}")
+            return False
