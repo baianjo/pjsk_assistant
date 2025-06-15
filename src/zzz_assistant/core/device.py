@@ -1,5 +1,6 @@
 import adbutils
 from adbutils import AdbDevice, AdbError
+import time
 
 
 class Device:
@@ -111,3 +112,52 @@ class Device:
             print(f"Error: 点击时发生adb错误：{e}")
         except Exception as e:
             print(f"Error: 点击时发生未知错误：{e}")
+
+
+
+    def is_game_running(self, package_name: str) -> bool:
+        """
+        检查指定报名游戏是否在前台运行
+        :param package_name: 游戏的包名
+        :return: 如果游戏在前台，返回True，否则返回False
+        """
+        if not self.device:
+            print("Error: 设备未连接，无法检查前台应用！")
+            return False
+
+        try:
+            current_app = self.device.app_current()
+            if current_app.package == package_name:
+                print(f"游戏{package_name}正在前台运行。")
+                return True
+            else:
+                print(f"当前前台应用是{current_app.package}，不是{package_name}。")
+                return False
+        except AdbError as e:
+            print(f"Error: 检查前台应用时发生ADB错误：{e}")
+            return False
+        except Exception as e:
+            print(f"Error: 检查前台应用时发生未知错误：{e}")
+            return False
+
+
+
+        def start_game(self, package_name: str) -> bool:
+            """
+            启动指定的应用
+            :param package_name:
+            :return:成功返回True，失败返回False
+            """
+            if not self.device:
+                print("Error: 设备未连接，无法启动游戏！")
+                return False
+
+            try:
+                print(f"尝试启动游戏：{package_name}...")
+                self.device.app_start(package_name)
+                time.sleep(5)
+                print(f"启动命令已发送，等待5秒后检查游戏是否启动。")
+                return True
+            except AdbError as e:
+                print(f"Error: 启动游戏时发生ADB错误：{e}")
+                return False

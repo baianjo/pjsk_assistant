@@ -41,15 +41,15 @@ class LoginTask(BaseTask):
         # 3. 检查该版本是否有广告，若有，等待广告标志出现
         config_path = os.path.join(CONFIG_PATH, 'config.yaml')
         ad_enabled = False
-        with open(config_path, 'r', encoding='utf-8') as f:
-            config = yaml.safe_load(f)
-        if config['ad']['enabled']:
+        if self.config['ad']['enabled']:
             ad_enabled = True
             print("该版本有广告弹窗，等待检测并关闭")
+
         if ad_enabled:
+            ad_path = os.path.join(ASSETS_PATH, 'login', '_TEMP_AD_BUTTON.png')
             ad_button_location = wait_for_template(
                 self.device,
-                os.path.join(ASSETS_PATH, 'login', '_TEMP_AD_BUTTON.png'),
+                ad_path,
                 timeout=60.0)
             if ad_button_location:
                 self.device.click(ad_button_location[0], ad_button_location[1])
@@ -57,4 +57,18 @@ class LoginTask(BaseTask):
 
 
         # 4. 等待主界面标志出现
+        guide_button_path = os.path.join(ASSETS_PATH, "main_page", "MAIN_GOTO_GUIDE.png")
+        guide_button_location = wait_for_template(
+            self.device,
+            guide_button_path,
+            timeout=60.0
+        )
+
+        if not guide_button_location:
+            print("Error: 未在截图中找到主界面标志（目前暂时以是否找到导航按钮为区分）。")
+            return False
+        print("已进入主界面，【登录任务】完成。")
+        return True
+
+
 

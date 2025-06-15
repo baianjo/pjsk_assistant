@@ -6,7 +6,7 @@ from src.zzz_assistant.core.vision import find_template
 def wait_for_template(device: Device,
                       template_path: str,
                       timeout: float = 20.0,
-                      interval: float = 0.5) -> tuple[int, int] | None:
+                      interval: float = 1) -> tuple[int, int] | None:
     """
     在指定时间内，周期性地等待一个模板图片出现在屏幕上。
 
@@ -23,6 +23,7 @@ def wait_for_template(device: Device,
     print(f"开始等待图片 '{template_path.split('/')[-1]}' 出现，最长等待 {timeout} 秒...")
 
     start_time = time.time()
+    not_found = False
     while time.time() - start_time < timeout:
         # 1. 获取截图
         screenshot_bytes = device.screenshot()
@@ -38,7 +39,9 @@ def wait_for_template(device: Device,
             return location
 
         # 3. 如果没找到，就等待一个间隔时间
-        print(f"未找到，{interval}秒后再次检查")
+        if not not_found:
+            print(f"未找到，{interval}秒后再次检查", end='')
+            not_found = True
         # 如果没找到，打印一个等待提示（可以做得更优雅，但现在够用）
         print(f".", end='', flush=True)
         time.sleep(interval)
