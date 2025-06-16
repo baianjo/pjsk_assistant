@@ -92,6 +92,7 @@ class Device:
         # 后续会添加click等方法，MaaTouch也会在这里进行
 
 
+
     def click(self, x: int, y: int):
         """
         点击操作

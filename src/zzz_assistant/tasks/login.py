@@ -1,9 +1,12 @@
 import os
+import time
+
 import yaml
+from adbutils import device
 
 from src.zzz_assistant.tasks.base_task import BaseTask
 from src.zzz_assistant.utils.helpers import wait_for_template
-from src.zzz_assistant.utils.paths import PROJECT_ROOT, ASSETS_PATH, CONFIG_PATH
+from src.zzz_assistant.utils.paths import PROJECT_ROOT, ASSETS_PATH
 
 
 class LoginTask(BaseTask):
@@ -18,20 +21,35 @@ class LoginTask(BaseTask):
         """
         print("开始执行【登录任务】...")
         # 1. 打开游戏
-        # TODO: 添加打开游戏逻辑
+        game_package_name = self.config['game']['package_name']
+        if not game_package_name:
+            print("Error: 配置文件未指定游戏包名。")
+            return False
+
+        if not self.device.is_game_running(game_package_name):
+            print("Warning: 游戏不在前台，尝试开始启动...")
+            self.device.start_game(game_package_name)
 
 
         # 2. 寻找并点击登录按钮
-        login_button_path = os.path.join(
-            ASSETS_PATH, 'login', 'CLICK_INTO_GAME.png'
-        )
+        login_button_path = os.path.join(ASSETS_PATH, 'login', 'CLICK_INTO_GAME.png')
         login_button_location = wait_for_template(
             self.device,
             login_button_path,
-            timeout=60.0)
-
+            timeout=120.0)
         if not login_button_location:
-            print("Error: 未在截图中找到登录按钮。")
+            print("Error: 2分钟仍未在截图中找到登录按钮。")
+            return False
+        # 第一次往往不可点击，会读条，但也不一定
+        time.sleep(20)
+        print("尝试多等一会...")
+
+        login_button_location = wait_for_template(
+            self.device,
+            login_button_path,
+            timeout=120.0)
+        if not login_button_location:
+            print("Error: 2分钟仍未在截图中找到登录按钮。")
             return False
 
         self.device.click(login_button_location[0], login_button_location[1])
@@ -39,7 +57,6 @@ class LoginTask(BaseTask):
 
 
         # 3. 检查该版本是否有广告，若有，等待广告标志出现
-        config_path = os.path.join(CONFIG_PATH, 'config.yaml')
         ad_enabled = False
         if self.config['ad']['enabled']:
             ad_enabled = True
@@ -50,7 +67,9 @@ class LoginTask(BaseTask):
             ad_button_location = wait_for_template(
                 self.device,
                 ad_path,
-                timeout=60.0)
+                timeout=60.0,
+                debug_mode=True)
+
             if ad_button_location:
                 self.device.click(ad_button_location[0], ad_button_location[1])
                 print("已点击广告按钮，等待广告关闭...")
@@ -61,11 +80,11 @@ class LoginTask(BaseTask):
         guide_button_location = wait_for_template(
             self.device,
             guide_button_path,
-            timeout=60.0
-        )
+            timeout=60.0,
+            debug_mode=True)
 
         if not guide_button_location:
-            print("Error: 未在截图中找到主界面标志（目前暂时以是否找到导航按钮为区分）。")
+            print("Error: 未在截图中找到主界面标志（目前暂时以是否找到交互按钮为区分）。")
             return False
         print("已进入主界面，【登录任务】完成。")
         return True
