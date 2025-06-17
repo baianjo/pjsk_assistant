@@ -1,12 +1,10 @@
 import os
 import time
 
-import yaml
-from adbutils import device
 
 from src.zzz_assistant.tasks.base_task import BaseTask
 from src.zzz_assistant.utils.helpers import wait_for_template
-from src.zzz_assistant.utils.paths import PROJECT_ROOT, ASSETS_PATH
+from src.zzz_assistant.utils.paths import ASSETS_PATH
 
 
 class LoginTask(BaseTask):
