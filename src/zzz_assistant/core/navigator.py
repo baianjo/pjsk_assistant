@@ -1,6 +1,6 @@
-from pages.ad_pages import AdPages
+from pages.ad_pages import AdPage
 from pages.base_page import BasePage
-from pages.main_pages import LoginPage, MainPages
+from pages.main_pages import LoginPage, MainPage
 from src.zzz_assistant.core.device import Device
 
 
@@ -11,8 +11,8 @@ class Navigator:
         # 【【【把所有已知的页面都注册到这里】】】
         self.known_pages: list[BasePage] = [
             LoginPage(device),
-            MainPages(device),
-            AdPages(device),
+            MainPage(device),
+            AdPage(device),
         ]
 
 

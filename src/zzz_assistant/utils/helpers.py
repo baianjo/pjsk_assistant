@@ -36,7 +36,10 @@ def wait_for_template(device: Device,
             continue  # 跳过本次循环，直接开始下一次
 
         # 2. 查找模板
-        location = find_template(screenshot_bytes, template_path, threshold=threshold, debug_mode=debug_mode)
+        location = find_template(screenshot_bytes,
+                                 template_path,
+                                 threshold=threshold,
+                                 debug_mode=debug_mode)
         # 等待时，可以把阈值设高一点，要求更精确
         if location:
             print(f"成功找到图片，位置：{location}。")
@@ -48,6 +51,7 @@ def wait_for_template(device: Device,
             not_found = True
         # 如果没找到，打印一个等待提示（可以做得更优雅，但现在够用）
         print(f".", end='', flush=True)
+        print("\n")
         time.sleep(interval)
 
     # 4. 如果循环结束（超时了）还没返回，说明超时了

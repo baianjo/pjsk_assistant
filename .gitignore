@@ -195,5 +195,7 @@ cython_debug/
 .cursorindexingignore
 
 
-#zzz_assistant
+# <<< zzz_assistant >>>
 .debug/
+# 忽略用户的私人配置文件
+config/config.user.yaml

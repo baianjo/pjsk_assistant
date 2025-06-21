@@ -14,7 +14,7 @@ class LoginPage(BasePage):
 
 
 
-class MainPages(BasePage):
+class MainPage(BasePage):
     def __init__(self, device):
         # 定义主页面的特征：必须能看到“导航”和“交互”按钮
         check_elements = [

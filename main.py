@@ -3,6 +3,7 @@ import os
 
 from src.zzz_assistant.core.device import Device
 from src.zzz_assistant.tasks.login import LoginTask
+from src.zzz_assistant.utils.config_loader import load_config
 from src.zzz_assistant.utils.paths import CONFIG_PATH
 
 
@@ -13,19 +14,16 @@ def main():
     print("ZZZ Assistant 正在启动...")
 
     # --- 1. 加载配置 ---
-    config_path = os.path.join(CONFIG_PATH, 'config.yaml')
+    config = load_config()
     try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            config = yaml.safe_load(f)
-        print("Configuration loaded successfully.")
         # 打印一下我们从配置文件里读到的模拟器地址和名字
         emulator_serial = config['emulator']['device_serial']
         print(f"Target emulator address: {emulator_serial}")
         print(f"Emulator name: {config['emulator']['name']}")
 
-    except FileNotFoundError:
-        print(f"Error: 无法在 {config_path} 找到配置文件！")
-        return  # 退出程序
+    except KeyError:
+        print("Error: 配置文件缺少emulator.device_serial 项。")
+        return
     except Exception as e:
         print(f"An error occurred while loading config: {e}")
         return  # 退出程序
