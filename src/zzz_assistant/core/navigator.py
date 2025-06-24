@@ -16,16 +16,23 @@ class Navigator:
         ]
 
 
-    def get_current_page(self, timeout: int = 10) -> BasePage | None:
+    def get_current_page(self) -> BasePage | None:
         """
         识别当前屏幕处于哪个已知页面。
 
-        它会遍历所有已知页面，并调用它们的 is_on_page 方法。
+        只截一次图，供所有页面检查。调用它们的 is_on_page 方法。
+        但由于直接传了screenshot_bytes，wait_for_template会忽略，所以设计timeout没什么用
         第一个返回True的页面就是当前页面。
         """
         print("\n--- 开始识别当前页面 ---")
+        screenshot_bytes = self.device.screenshot()
+        if not screenshot_bytes:
+            print("Error: 获取当前页面截图失败。")
+            return None
+
+
         for page in self.known_pages:
-            if page.is_on_page(timeout=timeout):
+            if page.is_on_page(screenshot_bytes=screenshot_bytes):
                 print(f"当前页面：{page.name}")
                 return page
 

@@ -11,7 +11,7 @@ DESIGN_RESOLUTION = (1280, 720) # 宽×高
 def find_template(screen_image_bytes: bytes,
                   template_path: str,
                   threshold: float = 0.8,
-                  debug_mode: bool = False):
+                  debug_mode: bool = False) -> tuple[int, int] | None:
     """
     在截图中找模板图片
     :param screen_image_bytes: 从device.screenshot()获取的原始截图字节
@@ -98,7 +98,8 @@ def find_template(screen_image_bytes: bytes,
         traceback.print_exc()
         return None
 
-    #后续我们会在这里添加颜色检测、OCR等函数
+
+#后续我们会在这里添加颜色检测、OCR等函数
 
 
 

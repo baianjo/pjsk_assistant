@@ -13,9 +13,11 @@ class BasePage:
         self.name = name
         self.check_elements = check_elements
 
-    def is_on_page(self, timeout: int = 3) -> bool:
+    def is_on_page(self,
+                   screenshot_bytes: bytes,
+                   timeout: int = 2) -> bool:
         """
-        检查当前是否停留在此界面
+        检查“我”这个页面当前 **是否** 停留在屏幕上。
         通过检查所有的check_elements是否都在屏幕上出现来判断
         这是一个快速检查，所以超时时间很短
         :param timeout: 为每个元素的检查设置的超过时间
@@ -24,7 +26,10 @@ class BasePage:
         print(f"正在检查是否在【{self.name}】界面...")
         for element_path in self.check_elements:
             # 使用wait_for_template检查元素，但超时时间很短
-            if not wait_for_template(self.device, element_path, timeout=timeout):
+            if not wait_for_template(self.device,
+                                     element_path,
+                                     timeout=timeout,
+                                     pre_captured_image=screenshot_bytes):
                 # 只要有一个元素没找到，就说明不在这个页面
                 print(f"Error: 未找到特征【{element_path}】，判断不在【{self.name}】界面！")
                 return False
